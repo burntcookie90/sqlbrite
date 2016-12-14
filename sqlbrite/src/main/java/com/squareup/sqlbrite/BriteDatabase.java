@@ -135,7 +135,7 @@ public final class BriteDatabase implements Closeable {
     logging = enabled;
   }
 
-  SQLiteDatabase getReadableDatabase() {
+  public SQLiteDatabase getReadableDatabase() {
     SQLiteDatabase db = readableDatabase;
     if (db == null) {
       synchronized (databaseLock) {
