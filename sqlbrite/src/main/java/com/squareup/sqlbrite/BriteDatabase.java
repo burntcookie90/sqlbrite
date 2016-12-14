@@ -149,8 +149,7 @@ public final class BriteDatabase implements Closeable {
     return db;
   }
 
-  // Package-private to avoid synthetic accessor method for 'transaction' instance.
-  SQLiteDatabase getWriteableDatabase() {
+  public SQLiteDatabase getWriteableDatabase() {
     SQLiteDatabase db = writeableDatabase;
     if (db == null) {
       synchronized (databaseLock) {
