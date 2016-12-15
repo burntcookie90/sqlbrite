@@ -153,6 +153,7 @@ public final class BriteDatabase implements Closeable {
    * @return a database object valid until {@link SQLiteOpenHelper#getWritableDatabase}
    *     or {@link #close} is called.
    */
+  @NonNull @CheckResult @WorkerThread
   public SQLiteDatabase getReadableDatabase() {
     SQLiteDatabase db = readableDatabase;
     if (db == null) {
@@ -186,6 +187,7 @@ public final class BriteDatabase implements Closeable {
    * @throws android.database.sqlite.SQLiteException if the database cannot be opened for writing
    * @return a read/write database object valid until {@link #close} is called
    */
+  @NonNull @CheckResult @WorkerThread
   public SQLiteDatabase getWriteableDatabase() {
     SQLiteDatabase db = writeableDatabase;
     if (db == null) {
