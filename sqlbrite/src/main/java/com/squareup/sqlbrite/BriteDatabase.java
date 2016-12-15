@@ -110,11 +110,6 @@ public final class BriteDatabase implements Closeable {
     }
   };
 
-  // Read and write guarded by 'databaseLock'. Lazily initialized. Use methods to access.
-  private volatile SQLiteDatabase readableDatabase;
-  private volatile SQLiteDatabase writeableDatabase;
-  private final Object databaseLock = new Object();
-
   private final Scheduler scheduler;
 
   // Package-private to avoid synthetic accessor method for 'transaction' instance.
@@ -155,17 +150,7 @@ public final class BriteDatabase implements Closeable {
    */
   @NonNull @CheckResult @WorkerThread
   public SQLiteDatabase getReadableDatabase() {
-    SQLiteDatabase db = readableDatabase;
-    if (db == null) {
-      synchronized (databaseLock) {
-        db = readableDatabase;
-        if (db == null) {
-          if (logging) log("Creating readable database");
-          db = readableDatabase = helper.getReadableDatabase();
-        }
-      }
-    }
-    return db;
+    return helper.getReadableDatabase();
   }
 
   /**
@@ -189,17 +174,7 @@ public final class BriteDatabase implements Closeable {
    */
   @NonNull @CheckResult @WorkerThread
   public SQLiteDatabase getWriteableDatabase() {
-    SQLiteDatabase db = writeableDatabase;
-    if (db == null) {
-      synchronized (databaseLock) {
-        db = writeableDatabase;
-        if (db == null) {
-          if (logging) log("Creating writeable database");
-          db = writeableDatabase = helper.getWritableDatabase();
-        }
-      }
-    }
-    return db;
+    return helper.getWritableDatabase();
   }
 
   void sendTableTrigger(Set<String> tables) {
@@ -313,11 +288,7 @@ public final class BriteDatabase implements Closeable {
    * well as attempting to create new ones for new subscriptions.
    */
   @Override public void close() {
-    synchronized (databaseLock) {
-      readableDatabase = null;
-      writeableDatabase = null;
-      helper.close();
-    }
+    helper.close();
   }
 
   /**
